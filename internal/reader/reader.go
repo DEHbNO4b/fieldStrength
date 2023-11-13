@@ -41,7 +41,7 @@ func SearchNewEnFiles() ([]string, error) {
 
 	return files, err
 }
-func ReadFenomens(f string) ([]*data.Fenomen, error) {
+func ReadFenomens(f string) ([]*data.Measure, error) {
 	logger.Log.Info("", zap.String("reading file:", f))
 	file, err := os.Open(f)
 	if err != nil {
@@ -53,7 +53,7 @@ func ReadFenomens(f string) ([]*data.Fenomen, error) {
 	cr := csv.NewReader(file)
 	cr.Comma = ';'
 
-	fields := make([]*data.Fenomen, 0, 100000)
+	fields := make([]*data.Measure, 0, 100000)
 
 	for {
 		record, err := cr.Read()

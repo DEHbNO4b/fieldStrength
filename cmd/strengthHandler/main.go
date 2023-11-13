@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
+	"github.com/DEHbNO4b/fieldStrength/internal/data"
 	"github.com/DEHbNO4b/fieldStrength/internal/logger"
 	"github.com/DEHbNO4b/fieldStrength/internal/reader"
 )
@@ -31,52 +33,40 @@ func run() error {
 		logger.Log.Info("no files in public dir")
 	}
 
-	//get all fenomens from file
-	allFens, err := reader.ReadFenomens(files[0])
+	//get all measurements from file
+	all, err := reader.ReadFenomens(files[0])
 	if err != nil {
 		logger.Log.Error(err.Error())
 		return nil
 	}
-	fmt.Printf("all fenomens len: %d\n", len(allFens))
+	fmt.Printf("all measurements len: %d\n", len(all))
 
 	fenomens := make(map[string][]float64)
-	for _, el := range allFens {
+	for _, el := range all {
 		fenomens[el.Fenomen()] = append(fenomens[el.Fenomen()], el.Strength())
 	}
 
+	fSlices := data.NewFenomens()
 	for key, val := range fenomens {
-		fmt.Printf("%s  len:  %d \n", strconv.Quote(key), len(val))
+		f := data.NewFenomen(key)
+		f.Strength = val
+		fSlices = append(fSlices, f)
 	}
-	// //get specified fenomens
-	// withoutFens := make([]float64, 0, 300000)
-	// rosa := make([]float64, 0, 1000)
-	// inei := make([]float64, 0, 1000)
-	// moros := make([]float64, 0, 1000)
-	// gololed := make([]float64, 0, 1000)
 
-	// for _, el := range allFens {
-	// 	switch el.Fenomen() {
-	// 	case "Нет явлений":
-	// 		withoutFens = append(withoutFens, el.Strength())
-	// 	case "Мр -морось":
-	// 		moros = append(moros, el.Strength())
-	// 	case "Р  -роса":
-	// 		rosa = append(rosa, el.Strength())
-	// 	case "И  -иней":
-	// 		inei = append(inei, el.Strength())
-	// 	case "Гл -гололед":
-	// 		gololed = append(gololed, el.Strength())
-	// 	}
-	// }
-	// fmt.Printf("without fenomens len: %d\n", len(withoutFens))
-	// sort.Float64s(withoutFens)
-	// l := len(withoutFens)
+	for i, el := range fSlices {
+		sort.Float64s(el.Strength)
+		l := len(el.Strength)
+		new := el.Strength[l/5 : 4*l/5]
+		fSlices[i].Strength = new
+		fSlices[i].Research()
+
+	}
+	sort.Sort(fSlices)
+	for _, el := range fSlices {
+		fmt.Printf("slice: %s -len: 	%d;	stats = %+v \n", strconv.Quote(el.Fenomen), len(el.Strength), el.Stats)
+	}
+
 	// new := withoutFens[l/6 : 5*l/6]
-	// fmt.Printf("new slice without fenomens len : %d\n", len(new))
-	// fmt.Printf("moros len : %d\n", len(moros))
-	// fmt.Printf("rosa len : %d\n", len(rosa))
-	// fmt.Printf("inei len : %d\n", len(inei))
-	// fmt.Printf("gololed len : %d\n", len(gololed))
 
 	return nil
 }
