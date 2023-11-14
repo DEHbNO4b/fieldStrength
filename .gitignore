@@ -6,6 +6,7 @@
 *.dylib
 *.csv
 
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -17,6 +18,7 @@ cmd/agent/main
 cmd/agent/agent
 cmd/server/main
 cmd/server/server
+public/field_strength.csv
 
 # Dependency directories (remove the comment below to include it)
 vendor/
