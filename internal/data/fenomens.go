@@ -1,8 +1,6 @@
 package data
 
 import (
-	"unicode/utf8"
-
 	"github.com/montanaflynn/stats"
 )
 
@@ -19,12 +17,13 @@ type Stats struct {
 }
 
 func NewFenomen(f string) Fenomen {
-	size := utf8.RuneCountInString(f)
-	for i := size - 1; i < 30; i++ {
-		f = f + " "
-	}
-	return Fenomen{Fenomen: string(f)}
+	// size := utf8.RuneCountInString(f)
+	// for i := size - 1; i < 30; i++ {
+	// 	f = f + " "
+	// }
+	return Fenomen{Fenomen: f}
 }
+
 func (f *Fenomen) Research() error {
 	m, err := stats.Median(f.Strength)
 	if err != nil {
@@ -61,7 +60,7 @@ func (f Fenomens) Len() int {
 }
 func (f Fenomens) Less(i, j int) bool {
 	// return len(f[i].Strength) > len(f[j].Strength)
-	return f[i].SD > f[j].SD
+	return f[i].SD < f[j].SD
 }
 func (f Fenomens) Swap(i, j int) {
 	f[i], f[j] = f[j], f[i]

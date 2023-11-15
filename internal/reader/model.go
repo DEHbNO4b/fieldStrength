@@ -27,5 +27,5 @@ func MakeFenomen(record []string) (Fenomen, error) {
 }
 
 func ToDomainFenomen(f Fenomen) (*data.Measure, error) {
-	return data.NewStrength(f.Fenomen, f.Strength)
+	return data.NewMeasure(f.Fenomen, f.Strength)
 }
