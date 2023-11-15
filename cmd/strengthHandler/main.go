@@ -43,9 +43,19 @@ func run() error {
 	fmt.Printf("all measurements len: %d\n", len(all))
 
 	f := science.MakeResearch(all)
+
+	f, err = science.TTest(f)
+	if err != nil {
+		logger.Log.Error(err.Error())
+	}
 	for _, el := range f {
 		fmt.Printf("%s:	len:%d;			stats = %+v \n", strconv.Quote(el.Fenomen), len(el.Strength), el.Stats)
 	}
-	writer.WriteOutCsv(f)
+	//writer.WriteOutCsv(f)
+	err = writer.OutStats(f)
+	if err != nil {
+		logger.Log.Error(err.Error())
+	}
+
 	return nil
 }

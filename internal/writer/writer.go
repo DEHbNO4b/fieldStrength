@@ -38,3 +38,30 @@ func WriteOutCsv(fSlices data.Fenomens) {
 		logger.Log.Error(err.Error())
 	}
 }
+func OutStats(f data.Fenomens) error {
+	file, err := os.Create(filepath.FromSlash("./public/stats.csv"))
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return err
+	}
+	w := csv.NewWriter(file)
+	w.Comma = ';'
+	err = w.Write([]string{"name", "N", "mean", "median", "max", "min", "sd", "t"})
+	if err != nil {
+		logger.Log.Error(err.Error())
+		return err
+	}
+	for _, el := range f {
+		err := w.Write(el.Slice())
+		if err != nil {
+			logger.Log.Error(err.Error())
+			return err
+		}
+	}
+	w.Flush()
+	if err := w.Error(); err != nil {
+		logger.Log.Error(err.Error())
+		return err
+	}
+	return nil
+}

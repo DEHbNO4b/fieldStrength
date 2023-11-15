@@ -1,8 +1,13 @@
 package data
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/montanaflynn/stats"
 )
+
+var GenMean float64
 
 type Fenomen struct {
 	Fenomen  string
@@ -10,10 +15,13 @@ type Fenomen struct {
 	Stats
 }
 type Stats struct {
+	Mean   float64
 	Median float64
 	Max    float64
 	Min    float64
 	SD     float64
+	N      int
+	T      float64
 }
 
 func NewFenomen(f string) Fenomen {
@@ -25,11 +33,17 @@ func NewFenomen(f string) Fenomen {
 }
 
 func (f *Fenomen) Research() error {
+	f.N = len(f.Strength)
 	m, err := stats.Median(f.Strength)
 	if err != nil {
 		return err
 	}
 	f.Median = m
+	m, err = stats.Mean(f.Strength)
+	if err != nil {
+		return err
+	}
+	f.Mean = m
 	m, err = stats.Max(f.Strength)
 	if err != nil {
 		return err
@@ -46,6 +60,30 @@ func (f *Fenomen) Research() error {
 	}
 	f.SD = sd
 	return nil
+}
+func (f Fenomen) Slice() []string {
+	n := strconv.Itoa(f.N)
+	mean := strconv.FormatFloat(f.Mean, 'f', -1, 64)
+	median := strconv.FormatFloat(f.Median, 'f', -1, 64)
+	max := strconv.FormatFloat(f.Max, 'f', -1, 64)
+	min := strconv.FormatFloat(f.Min, 'f', -1, 64)
+	sd := strconv.FormatFloat(f.SD, 'f', -1, 64)
+	t := strconv.FormatFloat(f.T, 'f', -1, 64)
+
+	ans := []string{
+		f.Fenomen,
+		n,
+		mean,
+		median,
+		max,
+		min,
+		sd,
+		t,
+	}
+	for i, el := range ans {
+		ans[i] = strings.Replace(el, ".", ",", 1)
+	}
+	return ans
 }
 
 type Fenomens []Fenomen
@@ -65,15 +103,3 @@ func (f Fenomens) Less(i, j int) bool {
 func (f Fenomens) Swap(i, j int) {
 	f[i], f[j] = f[j], f[i]
 }
-
-// type SdSort []Fenomen
-// func (s SdSort) Len() int {
-// 	return len(s)
-// }
-// func (s SdSort) Less(i, j int) bool {
-// 	return len(f[i].Strength) > len(f[j].Strength)
-// 	// return len(f[i].Strength) > len(f[j].Strength)
-// }
-// func (s SdSort) Swap(i, j int) {
-// 	f[i], f[j] = f[j], f[i]
-// }
